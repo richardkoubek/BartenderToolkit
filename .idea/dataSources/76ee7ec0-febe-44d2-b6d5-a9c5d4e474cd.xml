@@ -1,0 +1,22 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<dataSource name="@localhost">
+  <database-model serializer="dbm" dbms="MYSQL" family-id="MYSQL" format-version="4.49">
+    <root id="1">
+      <DefaultCasing>mixed/mixed</DefaultCasing>
+      <ServerVersion>8.1.0</ServerVersion>
+    </root>
+    <schema id="2" parent="1" name="backendApi"/>
+    <schema id="3" parent="1" name="exam"/>
+    <schema id="4" parent="1" name="foxSpaceTest"/>
+    <schema id="5" parent="1" name="foxspace"/>
+    <schema id="6" parent="1" name="information_schema"/>
+    <schema id="7" parent="1" name="mysql"/>
+    <schema id="8" parent="1" name="performance_schema"/>
+    <schema id="9" parent="1" name="posts"/>
+    <schema id="10" parent="1" name="reddit"/>
+    <schema id="11" parent="1" name="sys"/>
+    <schema id="12" parent="1" name="todo"/>
+    <schema id="13" parent="1" name="trail"/>
+    <schema id="14" parent="1" name="url_aliaser"/>
+  </database-model>
+</dataSource>
