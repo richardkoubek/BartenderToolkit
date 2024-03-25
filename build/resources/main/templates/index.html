@@ -8,5 +8,25 @@
 <h1>Welcome to Bartenders' Toolkit!</h1>
 <a th:href="@{/register}"><button>Register</button></a>
 
+<p
+        th:if="${userSuccess != null && userSuccess}"
+        th:text="|New user ${userName} has been registered!|"
+></p>
+
+<p
+        th:if="${userSuccess != null && ! userSuccess}"
+        th:text="'New user failed to register!'"
+></p>
+
+<p
+        th:if="${login != null && login}"
+        th:text="|You are logged in as ${userName}!|"
+></p>
+
+<p
+        th:if="${login != null && ! login}"
+        th:text="'Failed to login!'"
+></p>
+
 </body>
 </html>

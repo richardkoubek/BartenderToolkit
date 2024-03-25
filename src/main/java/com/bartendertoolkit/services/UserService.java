@@ -1,5 +1,10 @@
 package com.bartendertoolkit.services;
 
+import com.bartendertoolkit.models.User;
+
+import java.util.Optional;
+
 public interface UserService {
-    void createNewUser(String email, String userName, String password);
+    Optional<User> createNewUser(String email, String userName, String password);
+    Optional<User> findById(Long userId);
 }

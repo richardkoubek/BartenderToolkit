@@ -7,5 +7,12 @@
 <body>
 <h1>Register New User</h1>
 
+<form action="/register" th:action="@{/register}" th:object="${user}" method="post">
+    <p>Email: <input type="text" th:field="*{email}" /></p>
+    <p>User name: <input type="text" th:field="*{userName}" /></p>
+    <p>Password: <input type="text" th:field="*{password}" /></p>
+    <p><input type="submit" value="Submit" /> <input type="reset" value="Reset" /></p>
+</form>
+
 </body>
 </html>

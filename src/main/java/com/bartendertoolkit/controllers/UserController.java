@@ -1,12 +1,13 @@
 package com.bartendertoolkit.controllers;
 
+import com.bartendertoolkit.models.User;
 import com.bartendertoolkit.services.UserService;
 import lombok.RequiredArgsConstructor;
+import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.*;
+import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 @Controller
 @RequestMapping()
@@ -14,19 +15,41 @@ import org.springframework.web.bind.annotation.RequestParam;
 public class UserController {
     private final UserService userService;
 
-    @GetMapping("/home")
-    public String home(){
+    @GetMapping("/{userId}")
+    public String home(
+            @PathVariable Long userId
+    ){
+        var userEnt =  userService.findById(userId);
+        if(userEnt.isEmpty()){
+            return String.valueOf(ResponseEntity.notFound().build());
+        }
+
+
         return "index";
     }
 
     @GetMapping("/register")
-    public String registerForm(
-            Model model,
-            @RequestParam String email,
-            @RequestParam String userName,
-            @RequestParam String password
-    ){
+    public String registerForm(Model model){
+        model.addAttribute("user", new User());
 
         return "registerUser";
+    }
+
+    @PostMapping("register")
+    public String registerUser(
+            @RequestParam String email,
+            @RequestParam String userName,
+            @RequestParam String password,
+            RedirectAttributes redirectAttributes
+    ){
+        var userEnt = userService.createNewUser(email, userName, password);
+        if(userEnt.isEmpty()){
+            redirectAttributes.addFlashAttribute("userSuccess", false);
+        } else {
+            redirectAttributes.addFlashAttribute("userSuccess", true);
+            redirectAttributes.addFlashAttribute("userName", userEnt.get().getUserName());
+        }
+
+        return "redirect:/";
     }
 }
