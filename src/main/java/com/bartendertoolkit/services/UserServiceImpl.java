@@ -45,7 +45,7 @@ public class UserServiceImpl implements UserService {
         }
         var userEnt = userRepository.findUserByUserNameAndPassword(userName, password);
         if (userEnt.isEmpty()){
-            throw new RuntimeException("User does not exists");
+            throw new RuntimeException("Username or password incorrect");
         }
 
         return userEnt;

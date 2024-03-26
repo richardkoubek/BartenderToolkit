@@ -67,7 +67,13 @@ public class UserController {
             RedirectAttributes redirectAttributes
     ){
         var userEnt = userService.findUserByUsernameAndPassword(userName, password);
+        if(userEnt.isEmpty()){
+            redirectAttributes.addFlashAttribute("login", false);
+        } else {
+            redirectAttributes.addFlashAttribute("login", true);
+            redirectAttributes.addFlashAttribute("userName", userEnt.get().getUserName());
+        }
 
-        return "redirect:/";
+        return "redirect:/" + userEnt.get().getId();
     }
 }
