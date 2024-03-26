@@ -61,7 +61,12 @@ public class UserController {
     }
 
     @PostMapping("/login")
-    public String loginUser(){
+    public String loginUser(
+            @RequestParam String userName,
+            @RequestParam String password,
+            RedirectAttributes redirectAttributes
+    ){
+        var userEnt = userService.findUserByUsernameAndPassword(userName, password);
 
         return "redirect:/";
     }

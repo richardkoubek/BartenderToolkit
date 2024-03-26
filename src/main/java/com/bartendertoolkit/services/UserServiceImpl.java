@@ -38,6 +38,19 @@ public class UserServiceImpl implements UserService {
         return userRepository.findById(userId);
     }
 
+    @Override
+    public Optional<User> findUserByUsernameAndPassword(String userName, String password) {
+        if(!StringUtils.hasText(userName) && StringUtils.hasText(password)){
+            throw new RuntimeException("Username or password is empty");
+        }
+        var userEnt = userRepository.findUserByUserNameAndPassword(userName, password);
+        if (userEnt.isEmpty()){
+            throw new RuntimeException("User does not exists");
+        }
+
+        return userEnt;
+    }
+
     public boolean checkEmailFormat(String email){
         if (!StringUtils.hasText(email)) {
             return false;
