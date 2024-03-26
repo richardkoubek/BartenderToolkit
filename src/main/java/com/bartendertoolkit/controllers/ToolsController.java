@@ -26,7 +26,7 @@ public class ToolsController {
             @RequestParam int totalTips
             ){
         toolService.calculateTips(userId, names, hours, totalTips);
-        
+
         return "tipsCalculator";
     }
 }
