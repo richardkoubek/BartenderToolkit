@@ -35,7 +35,7 @@ public class UserController {
         return "registerUser";
     }
 
-    @PostMapping("register")
+    @PostMapping("/register")
     public String registerUser(
             @RequestParam String email,
             @RequestParam String userName,
@@ -49,6 +49,19 @@ public class UserController {
             redirectAttributes.addFlashAttribute("userSuccess", true);
             redirectAttributes.addFlashAttribute("userName", userEnt.get().getUserName());
         }
+
+        return "redirect:/";
+    }
+
+    @GetMapping("/login")
+    public String loginForm(Model model){
+        model.addAttribute("login", new User());
+
+        return "loginUser";
+    }
+
+    @PostMapping("/login")
+    public String loginUser(){
 
         return "redirect:/";
     }
