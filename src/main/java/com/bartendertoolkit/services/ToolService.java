@@ -1,7 +1,8 @@
 package com.bartendertoolkit.services;
 
 import java.util.List;
+import java.util.Map;
 
 public interface ToolService {
-    void calculateTips(Long userId, List<String> names, List<Float> hours, int totalTips);
+    Map<String, Float> calculateTips(Long userId, List<String> names, List<Float> hours, int totalTips);
 }
