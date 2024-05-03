@@ -1,0 +1,27 @@
+version: '3.4'
+services:
+  bartenders-toolkit-db:
+    image: mysql:8.0.28
+    command: --default-authentication-plugin=mysql_native_password
+    restart: always
+    environment:
+      MYSQL_DATABASE: BartenderToolkit
+      MYSQL_ROOT_PASSWORD: airbus
+    ports:
+      - '3306:3306'
+    expose:
+      - '3306'
+
+
+  bartenders-toolkit-ap:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    environment:
+      OPENSHIFT_MYSQL_DB_HOST: BartendersToolkit-db
+      OPENSHIFT_MYSQL_DB_PORT: 3306
+      OPENSHIFT_MYSQL_DB_USERNAME: root
+    ports:
+      - '8080:8080'
+    depends_on:
+      - bartenders-toolkit-db
