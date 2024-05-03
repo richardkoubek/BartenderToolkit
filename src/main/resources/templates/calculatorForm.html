@@ -1,0 +1,23 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Tips calculator</title>
+</head>
+<body>
+<h1>Tips calculator</h1>
+<form th:action="@{/tipscalculator/{userId}(userId=${userId})}" th:object="${tipForm}" method="post">
+    <label for="names">Names (comma-separated):</label><br>
+    <input type="text" id="names" name="names" th:field="*{names}"/><br><br>
+
+    <label for="hours">Hours (comma-separated with decimal point):</label><br>
+    <input type="text" id="hours" name="hours" th:field="*{hours}"/><br><br>
+
+    <label for="totalTips">Total Tips:</label><br>
+    <input type="text" id="totalTips" name="totalTips" th:field="*{totalTips}"/><br><br>
+
+    <button type="submit">Calculate</button>
+</form>
+
+</body>
+</html>

@@ -1,15 +1,12 @@
 package com.bartendertoolkit.controllers;
 
+import com.bartendertoolkit.entities.TipForm;
 import com.bartendertoolkit.services.ToolService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.*;
 
-import java.util.List;
 import java.util.Map;
 
 @Controller
@@ -19,15 +16,26 @@ public class ToolsController {
     private final ToolService toolService;
 
     @GetMapping("/tipscalculator/{userId}")
+    public String tipsCalculatorForm(Model model){
+        model.addAttribute("tipForm", new TipForm());
+
+        return "calculatorForm";
+    }
+
+    @PostMapping("/tipscalculator/{userId}")
     public String tipsCalculator(
             Model model,
             @PathVariable Long userId,
-            @RequestParam List<String> names,
-            @RequestParam List<Float> hours,
-            @RequestParam int totalTips
+            @ModelAttribute("tipForm") TipForm tipForm
             ){
-        Map<String, Float> calculatedTips = toolService.calculateTips(userId, names, hours, totalTips);
+        Map<String, Float> calculatedTips = toolService.calculateTips(
+                userId,
+                tipForm.getNames(),
+                tipForm.getHours(),
+                tipForm.getTotalTips());
+        model.addAttribute("names", calculatedTips.keySet());
+        model.addAttribute("tips", calculatedTips.values());
 
-        return "tipsCalculator";
+        return "calculatorResults";
     }
 }

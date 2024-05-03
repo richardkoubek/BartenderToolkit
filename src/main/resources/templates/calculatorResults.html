@@ -1,0 +1,26 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Tips calculator</title>
+</head>
+<body>
+<h1>Calculated tips</h1>
+
+<table border="1">
+    <thead>
+    <tr>
+        <th>Name</th>
+        <th>Tip</th>
+    </tr>
+    </thead>
+    <tbody>
+    <tr th:each="name : ${names}">
+        <td th:text="${name}"></td>
+        <td th:text="${tips[__${#lists.index(names, name)}__]}"></td>
+    </tr>
+    </tbody>
+</table>
+
+</body>
+</html>
