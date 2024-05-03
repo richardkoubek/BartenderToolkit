@@ -6,7 +6,7 @@
 </head>
 <body>
 <h1>Tips calculator</h1>
-<form th:action="@{/tipscalculator/{userId}(userId=${userId})}" th:object="${tipForm}" method="post">
+<form th:action="@{/tools/tipscalculator}" th:object="${tipForm}" method="post">
     <label for="names">Names (comma-separated):</label><br>
     <input type="text" id="names" name="names" th:field="*{names}"/><br><br>
 

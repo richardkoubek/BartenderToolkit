@@ -14,7 +14,7 @@ public class ToolServiceImpl implements ToolService{
     private final UserRepository userRepository;
 
     @Override
-    public Map<String, Float> calculateTips(Long userId, List<String> names, List<Float> hours, int totalTips) {
+    public Map<String, Float> calculateTips(List<String> names, List<Float> hours, int totalTips) {
         if  (names.size() != hours.size()){
             throw new RuntimeException("name or tip is missing");
         }
@@ -30,7 +30,7 @@ public class ToolServiceImpl implements ToolService{
         for (int i = 0; i < names.size(); i++) {
             String name = names.get(i);
             float hour = hours.get(i);
-            float tip = hour * hourlyTip;
+            float tip = (float) Math.ceil(hour * hourlyTip);
             calculatedTips.put(name, tip);
         }
 

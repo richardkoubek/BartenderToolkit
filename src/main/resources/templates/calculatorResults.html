@@ -15,9 +15,9 @@
     </tr>
     </thead>
     <tbody>
-    <tr th:each="name : ${names}">
-        <td th:text="${name}"></td>
-        <td th:text="${tips[__${#lists.index(names, name)}__]}"></td>
+    <tr th:each="entry : ${namesAndTips}">
+        <td th:text="${entry.key}"></td>
+        <td th:text="${entry.value}"></td>
     </tr>
     </tbody>
 </table>

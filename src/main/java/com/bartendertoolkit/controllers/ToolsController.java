@@ -7,6 +7,8 @@ import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Map;
 
 @Controller
@@ -15,26 +17,24 @@ import java.util.Map;
 public class ToolsController {
     private final ToolService toolService;
 
-    @GetMapping("/tipscalculator/{userId}")
+    @GetMapping("/tipscalculator")
     public String tipsCalculatorForm(Model model){
         model.addAttribute("tipForm", new TipForm());
 
         return "calculatorForm";
     }
 
-    @PostMapping("/tipscalculator/{userId}")
+    @PostMapping("/tipscalculator")
     public String tipsCalculator(
             Model model,
-            @PathVariable Long userId,
             @ModelAttribute("tipForm") TipForm tipForm
             ){
         Map<String, Float> calculatedTips = toolService.calculateTips(
-                userId,
                 tipForm.getNames(),
                 tipForm.getHours(),
                 tipForm.getTotalTips());
-        model.addAttribute("names", calculatedTips.keySet());
-        model.addAttribute("tips", calculatedTips.values());
+        List<Map.Entry<String, Float>> namesAndTips = new ArrayList<>(calculatedTips.entrySet());
+        model.addAttribute("namesAndTips", namesAndTips);
 
         return "calculatorResults";
     }
