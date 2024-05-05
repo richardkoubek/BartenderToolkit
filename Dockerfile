@@ -3,16 +3,18 @@ VOLUME /tmp
 EXPOSE 8080
 RUN mkdir -p /app
 
-ARG JAR_FILE
+ARG JAR_FILE=build/libs/*.jar
 ARG OPENSHIFT_MYSQL_DB_HOST
 ARG OPENSHIFT_MYSQL_DB_PORT
 ARG OPENSHIFT_MYSQL_DB_USERNAME
+ARG MYSQL_DATABE
 ARG MYSQL_ROOT_PASSWORD
 
 ENV OPENSHIFT_MYSQL_DB_HOST="bartenders-toolkit-db"
-ENV OPENSHIFT_MYSQL_DB_HOST="3306"
+ENV OPENSHIFT_MYSQL_DB_PORT="3306"
 ENV OPENSHIFT_MYSQL_DB_USERNAME="root"
+ENV MYSQL_DABATASE="bartenders-toolkit-db"
 ENV MYSQL_ROOT_PASSWORD="airbus"
 
 COPY ${JAR_FILE} /app/BartendersToolkit-app-0.0.1-SNAPSHOT.jar
-ENTRYPOINT ["java", "-jar", "/app/BartendersToolkit-app-0.0.1-SNAPSHOT.jar/BartendersToolkit-app-0.0.1-SNAPSHOT.jar"]
+ENTRYPOINT ["java", "-jar", "/app/BartendersToolkit-app-0.0.1-SNAPSHOT.jar"]
