@@ -51,6 +51,11 @@ public class UserServiceImpl implements UserService {
         return userEnt;
     }
 
+    @Override
+    public boolean existsByEmail(String email) {
+        return userRepository.existsByEmail(email);
+    }
+
     public boolean checkEmailFormat(String email){
         if (!StringUtils.hasText(email)) {
             return false;

@@ -1,6 +1,7 @@
 package com.bartendertoolkit.filter;
 
 import com.bartendertoolkit.services.AuthService;
+import com.bartendertoolkit.services.UserDetailsImpl;
 import com.bartendertoolkit.services.UserService;
 import io.jsonwebtoken.Claims;
 import jakarta.servlet.FilterChain;
@@ -9,10 +10,17 @@ import jakarta.servlet.http.Cookie;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
+import org.springframework.security.core.authority.SimpleGrantedAuthority;
+import org.springframework.security.core.context.SecurityContextHolder;
+import org.springframework.security.web.authentication.WebAuthenticationDetails;
+import org.springframework.security.web.authentication.WebAuthenticationDetailsSource;
+import org.springframework.util.StringUtils;
 import org.springframework.web.filter.OncePerRequestFilter;
 
 import java.io.IOException;
 import java.util.Arrays;
+import java.util.List;
 import java.util.Optional;
 
 public class JwtAuthFilter extends OncePerRequestFilter {
@@ -45,6 +53,29 @@ public class JwtAuthFilter extends OncePerRequestFilter {
                 }
             }
         }
+
+        String userEmail = null;
+        if(claims != null){
+            userEmail = claims.get("sub", String.class);
+        }
+
+        if (StringUtils.hasText(userEmail)
+                && SecurityContextHolder.getContext().getAuthentication() == null && userService.existsByEmail(userEmail)) {
+            UserDetailsImpl user = UserDetailsImpl.fromClaims(claims);
+            WebAuthenticationDetails details = new WebAuthenticationDetailsSource()
+                    .buildDetails(request);
+            UsernamePasswordAuthenticationToken authentication = new UsernamePasswordAuthenticationToken(
+                    user,
+                    null,
+                    List.of(new SimpleGrantedAuthority("user"))
+            );
+
+            authentication.setDetails(details);
+
+            SecurityContextHolder.getContext().setAuthentication(authentication);
+        }
+
+        filterChain.doFilter(request, response);
 
     }
 }
