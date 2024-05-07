@@ -25,7 +25,7 @@ public class AuthService {
     private String jwtSecret;
 
     @Value("${authCookieName}")
-    private String jwtCookie;
+    private String authCookieName;
 
     private final UserService userService;
 
@@ -44,26 +44,11 @@ public class AuthService {
         }
 
         User user = userService.findByEmail(email);
-        if (user = null || !userService.isValidPassword(user, password)) {
+        if (user == null || !userService.isValidPassword(user, password)) {
             throw new Exception("Incorrect password.");
         }
 
         return generateJWT(new UserDetailsImpl(user.getId(), user.getEmail()));
-    }
-
-    public String generateJWT(UserDetailsImpl user) {
-        Date now = new Date();
-        Date jwtTokenExp = new Date(now.getTime() + AUTH_COOKIE_TTL * 1000L);
-        SecretKey secretKey = Keys.hmacShaKeyFor(secretKeyWithPadding());
-
-        return Jwts.builder()
-                .subject(user.getEmail())
-                .id(String.valueOf(user.getId()))
-                .issuedAt(now)
-                .expiration(jwtTokenExp)
-                .issuer("/")
-                .signWith(secretKey)
-                .compact();
     }
 
     public String generateJWT(UserDetailsImpl user) {

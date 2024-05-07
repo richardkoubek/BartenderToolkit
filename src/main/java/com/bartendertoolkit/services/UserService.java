@@ -10,4 +10,7 @@ public interface UserService {
     Optional<User> findUserByUsernameAndPassword(String userName, String password);
     User findByEmail(String email);
     boolean existsByEmail(String email);
+    boolean isCorrectEmailFormat(String email);
+
+    boolean isValidPassword(User user, String password);
 }
