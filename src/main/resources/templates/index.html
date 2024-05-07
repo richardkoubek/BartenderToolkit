@@ -8,6 +8,7 @@
 <h1>Welcome to Bartenders' Toolkit!</h1>
 <a th:href="@{/register}"><button>Register</button></a>
 <a th:href="@{/login}"><button>Sign in</button></a>
+<a action="/logout/{userId}" th:action="@{/logout/${userId}}" method="post"><button>Sign out</button></a>
 <a th:href="@{/tools/tipscalculator}"><button>Tips Calculator</button></a>
 
 <p
@@ -28,6 +29,11 @@
 <p
         th:if="${login != null && ! login}"
         th:text="'Failed to login!'"
+></p>
+
+<p
+        th:if="${logout}"
+        th:text="|${userName} logged out.|"
 ></p>
 
 </body>

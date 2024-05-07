@@ -75,4 +75,15 @@ public class UserController {
 
         return "redirect:/" + userEnt.get().getId();
     }
+
+    @PostMapping("/logout/{userId}")
+    public String logoutUser(
+            RedirectAttributes redirectAttributes,
+            @PathVariable Long userId
+    ){
+        redirectAttributes.addFlashAttribute("logout", true);
+        redirectAttributes.addFlashAttribute("userName", userService.findById(userId));
+
+        return "redirect:/";
+    }
 }
