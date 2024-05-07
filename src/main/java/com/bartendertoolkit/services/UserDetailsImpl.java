@@ -15,7 +15,6 @@ import java.util.Collection;
 @NoArgsConstructor
 @AllArgsConstructor
 public class UserDetailsImpl implements UserDetails {
-
     private Long id;
     private String email;
 

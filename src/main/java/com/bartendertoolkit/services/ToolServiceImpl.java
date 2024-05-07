@@ -11,8 +11,6 @@ import java.util.Map;
 @Service
 @RequiredArgsConstructor
 public class ToolServiceImpl implements ToolService{
-    private final UserRepository userRepository;
-
     @Override
     public Map<String, Float> calculateTips(List<String> names, List<Float> hours, int totalTips) {
         if  (names.size() != hours.size()){

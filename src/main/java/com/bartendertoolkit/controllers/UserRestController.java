@@ -1,11 +1,8 @@
 package com.bartendertoolkit.controllers;
 
-import com.bartendertoolkit.services.AuthService;
 import com.bartendertoolkit.services.UserDetailsImpl;
 import com.bartendertoolkit.services.UserService;
-import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
-import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestPart;
 import org.springframework.web.bind.annotation.RestController;
@@ -24,17 +21,8 @@ public class UserRestController {
     public ResponseEntity<?> registerUser(@RequestPart(value = "email", required = false) String email,
                                           @RequestPart(value = "password", required = false) String password)
             throws Exception {
-        userService.validateNewUser(email, password);
 
-        if (userService.existsByEmail(email)) {
-            throw new Exception("User with this email already exists.");
+        return ResponseEntity.ok().build();
 
-        }
-
-        userService.createUser(email, password);
-        this.userId = userService.findByEmail(email).getId();
-        this.loggedUserDetails = new UserDetailsImpl(userId,email);
-
-        return ResponseEntity.status(HttpStatus.NO_CONTENT).build();
     }
 }
