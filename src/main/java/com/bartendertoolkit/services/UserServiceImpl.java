@@ -20,22 +20,10 @@ public class UserServiceImpl implements UserService {
     private final Pbkdf2PasswordEncoder passwordEncoder;
     private static final String EMAIL_REGEX = "^(?=.{1,64}@)[A-Za-z0-9_-]+(\\.[A-Za-z0-9_-]+)*@[^-][A-Za-z0-9-]+(\\.[A-Za-z0-9-]+)*(\\.[A-Za-z]{2,})$";
     private static final String PASSWORD_REGEX = "^(?=.*[a-z])(?=.*[A-Z])(?=.*\\d)(?=.*[@$!%*?&])[A-Za-z\\d@$!%*?&]{8,}$";
+
     @Override
-    public Optional<User> createNewUser(String email, String userName, String password) {
-        if (!checkEmailFormat(email)){
-         throw new RuntimeException("invalid email");
-        }
-        if(!StringUtils.hasText(userName) && StringUtils.hasText(password)){
-            throw new RuntimeException("Username or password is empty");
-        }
-        if(userRepository.existsByUserName(userName)){
-            return Optional.empty();
-        }
-
-        User userEnt =  new User(email, userName, password);
-
-        userRepository.save(userEnt);
-        return Optional.of(userEnt);
+    public void createNewUser(String email, String password) {
+        userRepository.save(new User(email, this.getUserToken(password)));
     }
 
     @Override
@@ -109,12 +97,8 @@ public class UserServiceImpl implements UserService {
         }
     }
 
-    public boolean checkEmailFormat(String email){
-        if (!StringUtils.hasText(email)) {
-            return false;
-        }
-        Pattern pattern = Pattern.compile(EMAIL_REGEX);
-        Matcher matcher = pattern.matcher(email.trim());
-        return matcher.matches();
+    @Override
+    public String getUserToken(String password) {
+        return passwordEncoder.encode(password);
     }
 }

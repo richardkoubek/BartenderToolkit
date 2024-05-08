@@ -26,7 +26,9 @@ public class UserRestController {
         if (userService.existsByEmail(email)) {
             throw new Exception("User with this email already exists.");
         }
-        
+
+        userService.createNewUser(email, password);
+
         return ResponseEntity.ok().build();
     }
 }

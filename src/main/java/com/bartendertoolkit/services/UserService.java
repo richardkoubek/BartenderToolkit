@@ -5,7 +5,7 @@ import com.bartendertoolkit.models.User;
 import java.util.Optional;
 
 public interface UserService {
-    Optional<User> createNewUser(String email, String userName, String password);
+    void createNewUser(String email, String password);
     Optional<User> findById(Long userId);
     Optional<User> findUserByUsernameAndPassword(String userName, String password);
     User findByEmail(String email);
@@ -14,4 +14,5 @@ public interface UserService {
     boolean isCorrectPasswordFormat(String password);
     boolean isValidPassword(User user, String password);
     void validateNewUser(String email, String password) throws Exception;
+    String getUserToken(String password);
 }

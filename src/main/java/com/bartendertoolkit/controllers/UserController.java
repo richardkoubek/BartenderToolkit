@@ -41,13 +41,7 @@ public class UserController {
             @RequestParam String password,
             RedirectAttributes redirectAttributes
     ){
-        var userEnt = userService.createNewUser(email, userName, password);
-        if(userEnt.isEmpty()){
-            redirectAttributes.addFlashAttribute("userSuccess", false);
-        } else {
-            redirectAttributes.addFlashAttribute("userSuccess", true);
-            redirectAttributes.addFlashAttribute("userName", userEnt.get().getUserName());
-        }
+
 
         return "redirect:/";
     }
