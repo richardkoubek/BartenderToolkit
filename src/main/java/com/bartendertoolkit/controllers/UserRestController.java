@@ -2,6 +2,7 @@ package com.bartendertoolkit.controllers;
 
 import com.bartendertoolkit.services.UserDetailsImpl;
 import com.bartendertoolkit.services.UserService;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestPart;
@@ -28,7 +29,9 @@ public class UserRestController {
         }
 
         userService.createNewUser(email, password);
+        this.userId = userService.findByEmail(email).getId();
+        this.loggedUserDetails = new UserDetailsImpl(userId,email);
 
-        return ResponseEntity.ok().build();
+        return ResponseEntity.status(HttpStatus.NO_CONTENT).build();
     }
 }
