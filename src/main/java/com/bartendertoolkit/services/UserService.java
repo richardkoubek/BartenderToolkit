@@ -11,5 +11,7 @@ public interface UserService {
     User findByEmail(String email);
     boolean existsByEmail(String email);
     boolean isCorrectEmailFormat(String email);
+    boolean isCorrectPasswordFormat(String password);
     boolean isValidPassword(User user, String password);
+    void validateNewUser(String email, String password) throws Exception;
 }

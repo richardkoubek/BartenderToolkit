@@ -77,6 +77,17 @@ public class UserServiceImpl implements UserService {
     }
 
     @Override
+    public boolean isCorrectPasswordFormat(String password) {
+        if (!StringUtils.hasText(password)) {
+            return false;
+        }
+        Pattern pattern = Pattern.compile(PASSWORD_REGEX);
+        Matcher matcher = pattern.matcher(password);
+
+        return matcher.matches();
+    }
+
+    @Override
     public boolean isValidPassword(User user, String password) {
         if (!StringUtils.hasText(password)) {
             return false;
@@ -85,6 +96,17 @@ public class UserServiceImpl implements UserService {
         Matcher matcher = pattern.matcher(password);
 
         return matcher.matches();
+    }
+
+    @Override
+    public void validateNewUser(String email, String password) throws Exception {
+        if (!isCorrectEmailFormat(email)) {
+            throw new Exception("Invalid E-mail address.");
+        }
+
+        if (!isCorrectPasswordFormat(password)) {
+            throw new Exception("Invalid Password.");
+        }
     }
 
     public boolean checkEmailFormat(String email){

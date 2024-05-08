@@ -21,8 +21,12 @@ public class UserRestController {
     public ResponseEntity<?> registerUser(@RequestPart(value = "email", required = false) String email,
                                           @RequestPart(value = "password", required = false) String password)
             throws Exception {
+        userService.validateNewUser(email, password);
 
+        if (userService.existsByEmail(email)) {
+            throw new Exception("User with this email already exists.");
+        }
+        
         return ResponseEntity.ok().build();
-
     }
 }
