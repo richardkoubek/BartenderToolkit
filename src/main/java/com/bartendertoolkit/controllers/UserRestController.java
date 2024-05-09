@@ -20,7 +20,8 @@ public class UserRestController {
 
     @PostMapping(value = "/register", consumes = {"multipart/form-data"})
     public ResponseEntity<?> registerUser(@RequestPart(value = "email", required = false) String email,
-                                          @RequestPart(value = "password", required = false) String password)
+                                          @RequestPart(value = "password", required = false) String password,
+                                          @RequestPart(value = "username", required = false) String userName)
             throws Exception {
         userService.validateNewUser(email, password);
 
@@ -28,7 +29,7 @@ public class UserRestController {
             throw new Exception("User with this email already exists.");
         }
 
-        userService.createNewUser(email, password);
+        userService.createNewUser(email, password, userName);
         this.userId = userService.findByEmail(email).getId();
         this.loggedUserDetails = new UserDetailsImpl(userId,email);
 

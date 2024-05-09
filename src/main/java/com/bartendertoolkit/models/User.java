@@ -21,12 +21,9 @@ public class User {
     private String password;
     private String userToken;
 
-    public User(String email, String userName, String password) {
-        this.email = email;
+    public User(String userName, String email, String userToken) {
         this.userName = userName;
-        this.password = password;
-    }
-
-    public User(String email, String userToken) {
+        this.email = email;
+        this.userToken = userToken;
     }
 }

@@ -22,8 +22,12 @@ public class UserServiceImpl implements UserService {
     private static final String PASSWORD_REGEX = "^(?=.*[a-z])(?=.*[A-Z])(?=.*\\d)(?=.*[@$!%*?&])[A-Za-z\\d@$!%*?&]{8,}$";
 
     @Override
-    public void createNewUser(String email, String password) {
-        userRepository.save(new User(email, this.getUserToken(password)));
+    public void createNewUser(String email, String password, String userName) {
+        User user = new User();
+        user.setUserName(userName);
+        user.setEmail(email);
+        user.setUserToken(this.getUserToken(password));
+        userRepository.save(user);
     }
 
     @Override

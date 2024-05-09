@@ -31,7 +31,7 @@ public class SecurityConfiguration {
         MvcRequestMatcher.Builder mvcMatcherBuilder = new MvcRequestMatcher.Builder(introspector);
 
         MvcRequestMatcher[] authWhiteList = {
-                mvcMatcherBuilder.pattern("/")
+                mvcMatcherBuilder.pattern("/register")
         };
 
         httpSecurity.authorizeHttpRequests(authorize -> authorize

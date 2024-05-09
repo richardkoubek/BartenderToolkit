@@ -5,7 +5,7 @@ import com.bartendertoolkit.models.User;
 import java.util.Optional;
 
 public interface UserService {
-    void createNewUser(String email, String password);
+    void createNewUser(String email, String password, String userName);
     Optional<User> findById(Long userId);
     Optional<User> findUserByUsernameAndPassword(String userName, String password);
     User findByEmail(String email);
