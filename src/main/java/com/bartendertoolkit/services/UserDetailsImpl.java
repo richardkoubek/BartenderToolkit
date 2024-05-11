@@ -7,7 +7,6 @@ import lombok.Data;
 import lombok.NoArgsConstructor;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
-import io.jsonwebtoken.Claims;
 
 import java.util.Collection;
 
@@ -19,15 +18,6 @@ public class UserDetailsImpl implements UserDetails {
     private Long id;
     private String email;
     private String password;
-
-    public static UserDetailsImpl fromClaims(Claims claims) {
-        long id = Long.parseLong(claims.getId());
-
-        return UserDetailsImpl.builder()
-                .id(id)
-                .email(claims.getSubject())
-                .build();
-    }
 
     public static UserDetailsImpl fromUser(User user){
         return UserDetailsImpl.builder()
@@ -44,31 +34,31 @@ public class UserDetailsImpl implements UserDetails {
 
     @Override
     public String getPassword() {
-        return null;
+        return password;
     }
 
     @Override
     public String getUsername() {
-        return null;
+        return email;
     }
 
     @Override
     public boolean isAccountNonExpired() {
-        return false;
+        return true;
     }
 
     @Override
     public boolean isAccountNonLocked() {
-        return false;
+        return true;
     }
 
     @Override
     public boolean isCredentialsNonExpired() {
-        return false;
+        return true;
     }
 
     @Override
     public boolean isEnabled() {
-        return false;
+        return true;
     }
 }
