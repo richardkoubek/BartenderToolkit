@@ -18,11 +18,13 @@ import java.util.regex.Pattern;
 public class UserServiceImpl implements UserService {
     private final UserRepository userRepository;
     private final Pbkdf2PasswordEncoder passwordEncoder;
-    private static final String EMAIL_REGEX = "^(?=.{1,64}@)[A-Za-z0-9_-]+(\\.[A-Za-z0-9_-]+)*@[^-][A-Za-z0-9-]+(\\.[A-Za-z0-9-]+)*(\\.[A-Za-z]{2,})$";
-    private static final String PASSWORD_REGEX = "^(?=.*[a-z])(?=.*[A-Z])(?=.*\\d)(?=.*[@$!%*?&])[A-Za-z\\d@$!%*?&]{8,}$";
+    private static final String EMAIL_REGEX =
+            "^(?=.{1,64}@)[A-Za-z0-9_-]+(\\.[A-Za-z0-9_-]+)*@[^-][A-Za-z0-9-]+(\\.[A-Za-z0-9-]+)*(\\.[A-Za-z]{2,})$";
+    private static final String PASSWORD_REGEX =
+            "^(?=.*[a-z])(?=.*[A-Z])(?=.*\\d)(?=.*[@$!%*?&_-])[A-Za-z\\d@$!%*?&_-]{8,}$";
 
     @Override
-    public void createNewUser(String email, String password, String userName) {
+    public void createNewUser(String email, String password, String userName) throws Exception{
         User user = new User();
         user.setUserName(userName);
         user.setEmail(email);
@@ -59,6 +61,11 @@ public class UserServiceImpl implements UserService {
     }
 
     @Override
+    public boolean existsByUserName(String userName){
+        return userRepository.existsByUserName(userName);
+    }
+
+    @Override
     public boolean isCorrectEmailFormat(String email) {
         if (!StringUtils.hasText(email)) {
             return false;
@@ -80,7 +87,7 @@ public class UserServiceImpl implements UserService {
     }
 
     @Override
-    public boolean isValidPassword(User user, String password) {
+    public boolean isCorrectPasswordFormat(User user, String password) {
         if (!StringUtils.hasText(password)) {
             return false;
         }
@@ -95,7 +102,6 @@ public class UserServiceImpl implements UserService {
         if (!isCorrectEmailFormat(email)) {
             throw new Exception("Invalid E-mail address.");
         }
-
         if (!isCorrectPasswordFormat(password)) {
             throw new Exception("Invalid Password.");
         }
@@ -104,5 +110,15 @@ public class UserServiceImpl implements UserService {
     @Override
     public String getUserToken(String password) {
         return passwordEncoder.encode(password);
+    }
+
+    @Override
+    public void checkIfExistsByEmailAndUserName(String email, String userName) throws Exception {
+        if (existsByEmail(email)) {
+            throw new Exception("User with this email already exists.");
+        }
+        if(existsByUserName(userName)){
+            throw new Exception("User with this user name already exists.");
+        }
     }
 }

@@ -24,10 +24,7 @@ public class UserRestController {
                                           @RequestPart(value = "username", required = false) String userName)
             throws Exception {
         userService.validateNewUser(email, password);
-
-        if (userService.existsByEmail(email)) {
-            throw new Exception("User with this email already exists.");
-        }
+        userService.checkIfExistsByEmailAndUserName(email, userName);
 
         userService.createNewUser(email, password, userName);
         this.userId = userService.findByEmail(email).getId();

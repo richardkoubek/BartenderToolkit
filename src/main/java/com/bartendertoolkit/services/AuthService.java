@@ -44,7 +44,7 @@ public class AuthService {
         }
 
         User user = userService.findByEmail(email);
-        if (user == null || !userService.isValidPassword(user, password)) {
+        if (user == null || !userService.isCorrectPasswordFormat(user, password)) {
             throw new Exception("Incorrect password.");
         }
 
