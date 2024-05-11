@@ -8,7 +8,6 @@ import org.springframework.security.crypto.password.Pbkdf2PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.util.StringUtils;
 
-import java.util.Optional;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -44,24 +43,6 @@ public class UserServiceImpl implements UserService {
         User user = userRepository.findByEmail(userDetails.getEmail());
         user.setUserToken(null);
         userRepository.save(user);
-    }
-
-    @Override
-    public Optional<User> findById(Long userId) {
-        return userRepository.findById(userId);
-    }
-
-    @Override
-    public Optional<User> findUserByUsernameAndPassword(String userName, String password) {
-        if(!StringUtils.hasText(userName) && StringUtils.hasText(password)){
-            throw new RuntimeException("Username or password is empty");
-        }
-        var userEnt = userRepository.findUserByUserNameAndPassword(userName, password);
-        if (userEnt.isEmpty()){
-            throw new RuntimeException("Username or password incorrect");
-        }
-
-        return userEnt;
     }
 
     @Override
