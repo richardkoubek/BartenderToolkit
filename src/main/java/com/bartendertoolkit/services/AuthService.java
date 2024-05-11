@@ -55,21 +55,6 @@ public class AuthService {
                 .compact();
     }
 
-    public String generateJWT(UserDetailsImpl userDetails){
-        Date now = new Date();
-        Date jwtTokenExp = new Date(now.getTime() + AUTH_COOKIE_TTL * 1000L);
-        SecretKey secretKey = Keys.hmacShaKeyFor(secretKeyWithPadding());
-
-        return Jwts.builder()
-                .subject(userDetails.getEmail())
-                .id(String.valueOf(userDetails.getId()))
-                .issuedAt(now)
-                .expiration(jwtTokenExp)
-                .issuer("/")
-                .signWith(secretKey)
-                .compact();
-    }
-
     public boolean validateToken(String token) {
         Date expDate = getExpDateFromToken(token);
         Date now = new Date();
@@ -111,7 +96,7 @@ public class AuthService {
         return result;
     }
 
-    public Cookie login(String email, String password, UserDetailsImpl userDetails) throws Exception {
+    public Cookie login(String email, String password) throws Exception {
         if (!StringUtils.hasText(email) || !StringUtils.hasText(password)) {
             throw new Exception("Please provide a valid email address and password.");
         }
@@ -121,11 +106,10 @@ public class AuthService {
             throw new Exception("Incorrect email or password.");
         }
 
-        String token;
-        if (validateToken(user.getUserToken())) {
-            token = generateJWT(userDetails);
-        } else {
+        String token = user.getUserToken();
+        if (!validateToken(token)) {
             token = generateAuthToken(user);
+            userService.setTokenToUser(user, token);
         }
         return createAuthCookie(token);
     }

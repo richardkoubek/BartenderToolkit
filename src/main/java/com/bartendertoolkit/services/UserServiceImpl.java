@@ -40,6 +40,13 @@ public class UserServiceImpl implements UserService {
     }
 
     @Override
+    public void removeToken(UserDetailsImpl userDetails){
+        User user = userRepository.findByEmail(userDetails.getEmail());
+        user.setUserToken(null);
+        userRepository.save(user);
+    }
+
+    @Override
     public Optional<User> findById(Long userId) {
         return userRepository.findById(userId);
     }
