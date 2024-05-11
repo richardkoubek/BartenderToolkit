@@ -1,22 +1,20 @@
-version: '3.4'
+version: '3.8'
 services:
   bartenders-toolkit-db:
     image: mysql:latest
     restart: always
     environment:
+      MYSQL_DB_HOST: docker-mysql
+      MYSQL_DB_PORT: 3306
       MYSQL_ROOT_PASSWORD: airbus
       MYSQL_DB_NAME: bartenders-toolkit-db
     ports:
       - "3306:3306"
 
   bartenders-toolkit-app:
-    build:
-      context: .
-      dockerfile: Dockerfile
+    image: toolkitimage/toolkit
     environment:
-      MYSQL_DB_HOST: mysql
-      MYSQL_DB_PORT: 3306
-      MYSQL_DB_NAME: bartenders-toolkit-db
+      DATASOURCE_URL: jdbc:mysql://bartenders-toolkit-db:3306/bartenders-toolkit-db?autoReconnect=true&allowPublicKeyRetrieval=true&useSSL=false
       MYSQL_DB_USERNAME: root
       MYSQL_ROOT_PASSWORD: airbus
     ports:
