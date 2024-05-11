@@ -18,5 +18,5 @@ public interface UserService {
     boolean isCorrectPasswordFormat(User user, String password);
     void validateNewUser(String email, String password) throws Exception;
     void checkIfExistsByEmailAndUserName(String email, String userName) throws Exception;
-    void checkCredentials(String email, String password) throws Exception;
+    void checkCredentials(String email) throws Exception;
 }

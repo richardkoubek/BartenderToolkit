@@ -4,7 +4,6 @@ import com.bartendertoolkit.models.User;
 import com.bartendertoolkit.services.AuthService;
 import com.bartendertoolkit.services.UserDetailsImpl;
 import com.bartendertoolkit.services.UserService;
-import jakarta.servlet.http.Cookie;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -43,9 +42,12 @@ public class UserRestController {
                                        @RequestPart(value = "password", required = false) String password
 
     ) throws Exception {
-        userService.checkCredentials(email, password);
-        Cookie cookie = authService.login(email, password);
+        userService.checkCredentials(email);
+        authService.login(email, password, this.loggedUserDetails);
 
-        return ResponseEntity.status(HttpStatus.ACCEPTED).body(cookie);
+        this.userId = userService.findByEmail(email).getId();
+        this.loggedUserDetails = new UserDetailsImpl(userId, email, password);
+
+        return ResponseEntity.status(HttpStatus.ACCEPTED).build();
     }
 }

@@ -13,6 +13,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.util.StringUtils;
 
 import javax.crypto.SecretKey;
+import java.time.LocalDateTime;
 import java.util.Date;
 import java.util.function.Function;
 
@@ -107,17 +108,19 @@ public class AuthService {
         return result;
     }
 
-    public Cookie login(String email, String password) throws Exception {
+    public String login(String email, String password, UserDetailsImpl userDetails) throws Exception {
         if (!StringUtils.hasText(email) || !StringUtils.hasText(password)) {
             throw new Exception("Please provide a valid email address and password.");
         }
 
         User user = userService.findByEmail(email);
-        if (user == null || !passwordEncoder.matches(password, user.getPassword())) {
+        if (user == null || !passwordEncoder.matches(password, userDetails.getPassword())) {
             throw new Exception("Incorrect email or password.");
         }
-
-        String token = generateAuthToken(email, password);
-        return createAuthCookie(token);
+        if(validateToken(user.getUserToken())){
+            return generateJWT(userDetails);
+        } else {
+            return generateAuthToken(user, email, password);
+        }
     }
 }

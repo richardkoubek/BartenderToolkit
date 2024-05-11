@@ -125,7 +125,7 @@ public class UserServiceImpl implements UserService {
     }
 
     @Override
-    public void checkCredentials(String email, String password) throws Exception {
+    public void checkCredentials(String email) throws Exception {
         if (!existsByEmail(email)){
             throw new Exception("User with this email doesn't exists.");
         }
