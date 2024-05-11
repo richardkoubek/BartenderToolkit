@@ -1,5 +1,6 @@
 package com.bartendertoolkit.services;
 
+import com.bartendertoolkit.models.User;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
@@ -17,6 +18,7 @@ import java.util.Collection;
 public class UserDetailsImpl implements UserDetails {
     private Long id;
     private String email;
+    private String password;
 
     public static UserDetailsImpl fromClaims(Claims claims) {
         long id = Long.parseLong(claims.getId());
@@ -24,6 +26,14 @@ public class UserDetailsImpl implements UserDetails {
         return UserDetailsImpl.builder()
                 .id(id)
                 .email(claims.getSubject())
+                .build();
+    }
+
+    public static UserDetailsImpl fromUser(User user){
+        return UserDetailsImpl.builder()
+                .id(user.getId())
+                .email(user.getEmail())
+                .password(user.getPassword())
                 .build();
     }
 

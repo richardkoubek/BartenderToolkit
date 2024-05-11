@@ -8,6 +8,7 @@ import io.jsonwebtoken.security.Keys;
 import jakarta.servlet.http.Cookie;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.security.crypto.password.Pbkdf2PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.util.StringUtils;
 
@@ -20,6 +21,7 @@ import java.util.function.Function;
 public class AuthService {
     private static final int AUTH_COOKIE_TTL = 30 * 24 * 60 * 60;
     private static final int KEY_LENGTH = 32;
+    private final Pbkdf2PasswordEncoder passwordEncoder;
 
     @Value("${password.secret}")
     private String jwtSecret;
@@ -29,8 +31,7 @@ public class AuthService {
 
     private final UserService userService;
 
-    public Cookie createAuthCookie(String email, String password) throws Exception {
-        String token = generateAuthToken(email, password);
+    public Cookie createAuthCookie(String token) throws Exception {
         Cookie cookieTtl = new Cookie(authCookieName, token);
         cookieTtl.setPath("/");
         cookieTtl.setHttpOnly(true);
@@ -38,17 +39,16 @@ public class AuthService {
         return cookieTtl;
     }
 
-    public String generateAuthToken(String email, String password) throws Exception {
+    public String generateAuthToken(User user, String email, String password) throws Exception {
         if (!StringUtils.hasText(email) || !StringUtils.hasText(password)) {
             throw new Exception("Please provide a valid email address and password.");
         }
 
-        User user = userService.findByEmail(email);
-        if (user == null || !userService.isCorrectPasswordFormat(user, password)) {
+        if (!userService.isCorrectPasswordFormat(password)) {
             throw new Exception("Incorrect password.");
         }
 
-        return generateJWT(new UserDetailsImpl(user.getId(), user.getEmail()));
+        return generateJWT(new UserDetailsImpl(user.getId(), user.getEmail(), passwordEncoder.encode(password)));
     }
 
     public String generateJWT(UserDetailsImpl user) {
@@ -105,5 +105,19 @@ public class AuthService {
         }
 
         return result;
+    }
+
+    public Cookie login(String email, String password) throws Exception {
+        if (!StringUtils.hasText(email) || !StringUtils.hasText(password)) {
+            throw new Exception("Please provide a valid email address and password.");
+        }
+
+        User user = userService.findByEmail(email);
+        if (user == null || !passwordEncoder.matches(password, user.getPassword())) {
+            throw new Exception("Incorrect email or password.");
+        }
+
+        String token = generateAuthToken(email, password);
+        return createAuthCookie(token);
     }
 }

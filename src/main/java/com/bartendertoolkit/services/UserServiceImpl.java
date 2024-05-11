@@ -2,6 +2,7 @@ package com.bartendertoolkit.services;
 
 import com.bartendertoolkit.models.User;
 import com.bartendertoolkit.repositories.UserRepository;
+import jakarta.servlet.http.Cookie;
 import lombok.RequiredArgsConstructor;
 import org.springframework.context.annotation.PropertySource;
 import org.springframework.security.crypto.password.Pbkdf2PasswordEncoder;
@@ -24,11 +25,17 @@ public class UserServiceImpl implements UserService {
             "^(?=.*[a-z])(?=.*[A-Z])(?=.*\\d)(?=.*[@$!%*?&_-])[A-Za-z\\d@$!%*?&_-]{8,}$";
 
     @Override
-    public void createNewUser(String email, String password, String userName) throws Exception{
+    public User createNewUser(String email, String password, String userName) {
         User user = new User();
         user.setUserName(userName);
         user.setEmail(email);
-        user.setUserToken(this.getUserToken(password));
+        userRepository.save(user);
+        return user;
+    }
+
+    @Override
+    public void setTokenToUser(User user, String token){
+        user.setUserToken(token);
         userRepository.save(user);
     }
 
@@ -108,17 +115,19 @@ public class UserServiceImpl implements UserService {
     }
 
     @Override
-    public String getUserToken(String password) {
-        return passwordEncoder.encode(password);
-    }
-
-    @Override
     public void checkIfExistsByEmailAndUserName(String email, String userName) throws Exception {
         if (existsByEmail(email)) {
             throw new Exception("User with this email already exists.");
         }
         if(existsByUserName(userName)){
             throw new Exception("User with this user name already exists.");
+        }
+    }
+
+    @Override
+    public void checkCredentials(String email, String password) throws Exception {
+        if (!existsByEmail(email)){
+            throw new Exception("User with this email doesn't exists.");
         }
     }
 }

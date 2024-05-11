@@ -1,7 +1,11 @@
 package com.bartendertoolkit.controllers;
 
+import com.bartendertoolkit.models.User;
+import com.bartendertoolkit.services.AuthService;
 import com.bartendertoolkit.services.UserDetailsImpl;
 import com.bartendertoolkit.services.UserService;
+import jakarta.servlet.http.Cookie;
+import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -9,14 +13,12 @@ import org.springframework.web.bind.annotation.RequestPart;
 import org.springframework.web.bind.annotation.RestController;
 
 @RestController
+@RequiredArgsConstructor
 public class UserRestController {
     private final UserService userService;
+    private final AuthService authService;
     Long userId;
     private UserDetailsImpl loggedUserDetails;
-
-    public UserRestController(UserService userService) {
-        this.userService = userService;
-    }
 
     @PostMapping(value = "/register", consumes = {"multipart/form-data"})
     public ResponseEntity<?> registerUser(@RequestPart(value = "email", required = false) String email,
@@ -26,10 +28,24 @@ public class UserRestController {
         userService.validateNewUser(email, password);
         userService.checkIfExistsByEmailAndUserName(email, userName);
 
-        userService.createNewUser(email, password, userName);
+        User user = userService.createNewUser(email, password, userName);
+        String token = authService.generateAuthToken(user, email, password);
+        userService.setTokenToUser(user, token);
+
         this.userId = userService.findByEmail(email).getId();
-        this.loggedUserDetails = new UserDetailsImpl(userId,email);
+        this.loggedUserDetails = new UserDetailsImpl(userId, email, password);
 
         return ResponseEntity.status(HttpStatus.NO_CONTENT).build();
+    }
+
+    @PostMapping(value = "/login", consumes = {"multipart/form-data"})
+    public ResponseEntity<?> loginUser(@RequestPart(value = "email", required = false) String email,
+                                       @RequestPart(value = "password", required = false) String password
+
+    ) throws Exception {
+        userService.checkCredentials(email, password);
+        Cookie cookie = authService.login(email, password);
+
+        return ResponseEntity.status(HttpStatus.ACCEPTED).body(cookie);
     }
 }
