@@ -13,7 +13,6 @@ import org.springframework.stereotype.Service;
 import org.springframework.util.StringUtils;
 
 import javax.crypto.SecretKey;
-import java.time.LocalDateTime;
 import java.util.Date;
 import java.util.function.Function;
 
@@ -40,26 +39,15 @@ public class AuthService {
         return cookieTtl;
     }
 
-    public String generateAuthToken(User user, String email, String password) throws Exception {
-        if (!StringUtils.hasText(email) || !StringUtils.hasText(password)) {
-            throw new Exception("Please provide a valid email address and password.");
-        }
-
-        if (!userService.isCorrectPasswordFormat(password)) {
-            throw new Exception("Incorrect password.");
-        }
-
-        return generateJWT(new UserDetailsImpl(user.getId(), user.getEmail(), passwordEncoder.encode(password)));
-    }
-
-    public String generateJWT(UserDetailsImpl user) {
+    public String generateAuthToken(User user) {
+        UserDetailsImpl userDetails = UserDetailsImpl.fromUser(user);
         Date now = new Date();
         Date jwtTokenExp = new Date(now.getTime() + AUTH_COOKIE_TTL * 1000L);
         SecretKey secretKey = Keys.hmacShaKeyFor(secretKeyWithPadding());
 
         return Jwts.builder()
-                .subject(user.getEmail())
-                .id(String.valueOf(user.getId()))
+                .subject(userDetails.getEmail())
+                .id(String.valueOf(userDetails.getId()))
                 .issuedAt(now)
                 .expiration(jwtTokenExp)
                 .issuer("/")
@@ -108,19 +96,16 @@ public class AuthService {
         return result;
     }
 
-    public String login(String email, String password, UserDetailsImpl userDetails) throws Exception {
+    public void login(String email, String password) throws Exception {
         if (!StringUtils.hasText(email) || !StringUtils.hasText(password)) {
             throw new Exception("Please provide a valid email address and password.");
         }
 
         User user = userService.findByEmail(email);
-        if (user == null || !passwordEncoder.matches(password, userDetails.getPassword())) {
+        if (user == null || !passwordEncoder.matches(password, user.getPassword())) {
             throw new Exception("Incorrect email or password.");
         }
-        if(validateToken(user.getUserToken())){
-            return generateJWT(userDetails);
-        } else {
-            return generateAuthToken(user, email, password);
-        }
+
+        generateAuthToken(user);
     }
 }

@@ -2,7 +2,6 @@ package com.bartendertoolkit.services;
 
 import com.bartendertoolkit.models.User;
 import com.bartendertoolkit.repositories.UserRepository;
-import jakarta.servlet.http.Cookie;
 import lombok.RequiredArgsConstructor;
 import org.springframework.context.annotation.PropertySource;
 import org.springframework.security.crypto.password.Pbkdf2PasswordEncoder;
@@ -29,6 +28,7 @@ public class UserServiceImpl implements UserService {
         User user = new User();
         user.setUserName(userName);
         user.setEmail(email);
+        user.setPassword(passwordEncoder.encode(password));
         userRepository.save(user);
         return user;
     }

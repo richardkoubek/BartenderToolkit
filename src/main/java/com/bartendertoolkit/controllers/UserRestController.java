@@ -28,7 +28,7 @@ public class UserRestController {
         userService.checkIfExistsByEmailAndUserName(email, userName);
 
         User user = userService.createNewUser(email, password, userName);
-        String token = authService.generateAuthToken(user, email, password);
+        String token = authService.generateAuthToken(user);
         userService.setTokenToUser(user, token);
 
         this.userId = userService.findByEmail(email).getId();
@@ -43,7 +43,7 @@ public class UserRestController {
 
     ) throws Exception {
         userService.checkCredentials(email);
-        authService.login(email, password, this.loggedUserDetails);
+        authService.login(email, password);
 
         this.userId = userService.findByEmail(email).getId();
         this.loggedUserDetails = new UserDetailsImpl(userId, email, password);
