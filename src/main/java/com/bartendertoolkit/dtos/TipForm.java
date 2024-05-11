@@ -1,4 +1,4 @@
-package com.bartendertoolkit.entities;
+package com.bartendertoolkit.dtos;
 
 import lombok.Getter;
 import lombok.Setter;
