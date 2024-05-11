@@ -37,7 +37,7 @@ public class SecurityConfiguration {
         httpSecurity.authorizeHttpRequests(authorize -> authorize
                         .requestMatchers(authWhiteList)
                         .permitAll()
-                        .requestMatchers(mvcMatcherBuilder.pattern("/**"))
+                        .requestMatchers(mvcMatcherBuilder.pattern("/register"))
                         .authenticated()
                         .anyRequest()
                         .permitAll()

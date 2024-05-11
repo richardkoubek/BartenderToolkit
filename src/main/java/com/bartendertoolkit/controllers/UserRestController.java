@@ -4,7 +4,9 @@ import com.bartendertoolkit.models.User;
 import com.bartendertoolkit.services.AuthService;
 import com.bartendertoolkit.services.UserDetailsImpl;
 import com.bartendertoolkit.services.UserService;
+import jakarta.servlet.http.Cookie;
 import lombok.RequiredArgsConstructor;
+import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -40,14 +42,20 @@ public class UserRestController {
     @PostMapping(value = "/login", consumes = {"multipart/form-data"})
     public ResponseEntity<?> loginUser(@RequestPart(value = "email", required = false) String email,
                                        @RequestPart(value = "password", required = false) String password
+    ) {
+        try {
+            userService.checkCredentials(email);
+            Cookie authCookie = authService.login(email, password, this.loggedUserDetails);
+            HttpHeaders responseHeaders = new HttpHeaders();
+            responseHeaders.add("Set-Cookie", authCookie.toString());
+            this.userId = userService.findByEmail(email).getId();
+            this.loggedUserDetails = new UserDetailsImpl(userId, email, password);
 
-    ) throws Exception {
-        userService.checkCredentials(email);
-        authService.login(email, password);
-
-        this.userId = userService.findByEmail(email).getId();
-        this.loggedUserDetails = new UserDetailsImpl(userId, email, password);
-
-        return ResponseEntity.status(HttpStatus.ACCEPTED).build();
+            return ResponseEntity.status(HttpStatus.ACCEPTED)
+                    .headers(responseHeaders)
+                    .build();
+        } catch (Exception e) {
+            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).build();
+        }
     }
 }
