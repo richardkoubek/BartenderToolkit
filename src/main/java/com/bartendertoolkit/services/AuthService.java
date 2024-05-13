@@ -121,15 +121,7 @@ public class AuthService {
 
     public ResponseEntity<?> logoutUserFromCookie(String authCookieValue) throws UnsupportedEncodingException {
         if (authCookieValue != null) {
-            String decodedCookie = URLDecoder.decode(authCookieValue, StandardCharsets.UTF_8.toString());
-            String[] cookieParts = decodedCookie.split(";\\s*");
-            String token = null;
-            for (String part : cookieParts) {
-                if (part.startsWith("authToken=")) {
-                    token = part.substring("authToken=".length());
-                    break;
-                }
-            }
+            String token = getTokenFromCookie(authCookieValue);
             if (token != null) {
                 UserDetailsImpl userDetails = getUserDetailsFromToken(token);
                 if (userDetails != null) {
@@ -163,5 +155,26 @@ public class AuthService {
         }
 
         return null;
+    }
+
+    public String getTokenFromCookie(String authCookieValue) throws UnsupportedEncodingException {
+        String token;
+        if (authCookieValue != null) {
+            String decodedCookie = URLDecoder.decode(authCookieValue, StandardCharsets.UTF_8.toString());
+            String[] cookieParts = decodedCookie.split(";\\s*");
+            token = null;
+            for (String part : cookieParts) {
+                if (part.startsWith("authToken=")) {
+                    token = part.substring("authToken=".length());
+                    break;
+                }
+            }
+            if (token != null) {
+                return token;
+            }
+        } else {
+            throw new RuntimeException("Decoding cookie failed");
+        }
+        return token;
     }
 }

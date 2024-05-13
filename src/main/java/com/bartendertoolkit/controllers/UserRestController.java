@@ -63,7 +63,7 @@ public class UserRestController {
     }
 
     @PostMapping("/logout")
-    public ResponseEntity<?> logOutUser(@CookieValue(name = "authCookie", required = false) String authCookieValue) throws UnsupportedEncodingException {
+    public ResponseEntity<?> logOutUser(@CookieValue(name = "JWT-Cookie", required = false) String authCookieValue) throws UnsupportedEncodingException {
         return authService.logoutUserFromCookie(authCookieValue);
     }
 }
