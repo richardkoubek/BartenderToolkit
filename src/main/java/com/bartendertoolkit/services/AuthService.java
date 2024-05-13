@@ -8,11 +8,16 @@ import io.jsonwebtoken.security.Keys;
 import jakarta.servlet.http.Cookie;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.security.crypto.password.Pbkdf2PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.util.StringUtils;
 
 import javax.crypto.SecretKey;
+import java.io.UnsupportedEncodingException;
+import java.net.URLDecoder;
+import java.nio.charset.StandardCharsets;
 import java.util.Date;
 import java.util.function.Function;
 
@@ -112,5 +117,51 @@ public class AuthService {
             userService.setTokenToUser(user, token);
         }
         return createAuthCookie(token);
+    }
+
+    public ResponseEntity<?> logoutUserFromCookie(String authCookieValue) throws UnsupportedEncodingException {
+        if (authCookieValue != null) {
+            String decodedCookie = URLDecoder.decode(authCookieValue, StandardCharsets.UTF_8.toString());
+            String[] cookieParts = decodedCookie.split(";\\s*");
+            String token = null;
+            for (String part : cookieParts) {
+                if (part.startsWith("authToken=")) {
+                    token = part.substring("authToken=".length());
+                    break;
+                }
+            }
+            if (token != null) {
+                UserDetailsImpl userDetails = getUserDetailsFromToken(token);
+                if (userDetails != null) {
+                    userService.removeToken(userDetails);
+                    return ResponseEntity.status(204).build();
+                }
+            }
+        } else {
+            throw new RuntimeException("Decoding cookie failed");
+        }
+        return ResponseEntity.status(HttpStatus.UNAUTHORIZED).build();
+    }
+
+    public UserDetailsImpl getUserDetailsFromToken (String token){
+        if (!StringUtils.hasText(token)) {
+            return null;
+        }
+
+        try {
+            Claims claims = getAllClaimsFromToken(token);
+            if (claims != null) {
+                String userId = claims.getId();
+                String email = claims.getSubject();
+
+                if (userId != null && email != null) {
+                    return new UserDetailsImpl(Long.parseLong(userId), email, null);
+                }
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+
+        return null;
     }
 }

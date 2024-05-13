@@ -9,10 +9,12 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.security.core.annotation.AuthenticationPrincipal;
+import org.springframework.web.bind.annotation.CookieValue;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestPart;
 import org.springframework.web.bind.annotation.RestController;
+
+import java.io.UnsupportedEncodingException;
 
 @RestController
 @RequiredArgsConstructor
@@ -61,8 +63,7 @@ public class UserRestController {
     }
 
     @PostMapping("/logout")
-    public ResponseEntity<?> logOutUser(@AuthenticationPrincipal UserDetailsImpl userDetails) {
-        userService.removeToken(userDetails);
-        return ResponseEntity.status(204).build();
+    public ResponseEntity<?> logOutUser(@CookieValue(name = "authCookie", required = false) String authCookieValue) throws UnsupportedEncodingException {
+        return authService.logoutUserFromCookie(authCookieValue);
     }
 }
